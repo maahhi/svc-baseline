@@ -1,0 +1,4 @@
+Validation Loss: 0.6676
+Test Loss: 0.6193
+Memory used: 720.8515625 MB
+Time taken: 1646.81 seconds

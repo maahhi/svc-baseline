@@ -1,0 +1,14 @@
+Training samples: 568
+Validation samples: 71
+Test samples: 71
+
+Memory used: 4679.33984375 MB
+Time taken: 679.33 seconds
+
+parameters :
+dataset_path = r'C:\Users\maahh\Downloads\Compressed\VocalSet1-2\data_by_singer'
+sample_rate = 22050
+n_mels = 128
+hop_length = 512
+time_steps = 216 
+limit_of_lables =2
