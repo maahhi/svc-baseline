@@ -4,19 +4,19 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, fbeta_score, accuracy_score
 from joblib import dump, load
 
-X = load('./../../data-preprocess/run2/data.joblib')
+X = load('./../../data-preprocess/run8/data.joblib')
 X = X.reshape(X.shape[0], -1)
-Y = load('./../../data-preprocess/run2/labels.joblib')
+Y = load('./../../data-preprocess/run8/labels.joblib')
 # Find indices where Y is 0 or 1
-filtered_indices = np.where((Y == 0) | (Y == 1))[0]
+filtered_indices = np.where((Y == 0) | (Y == 9))[0]
 
 # Use these indices to filter X and Y
 X = X[filtered_indices]
 Y = Y[filtered_indices]
 
 
-X_temp, X_test, Y_temp, Y_test = train_test_split(X, Y, test_size=0.10, random_state=42)
-X_train, X_val, Y_train, Y_val = train_test_split(X_temp, Y_temp, test_size=1/9, random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.10, random_state=42)
+#X_train, X_val, Y_train, Y_val = train_test_split(X_temp, Y_temp, test_size=1/9, random_state=42)
 
 # Creating the SVM classifier
 clf = svm.SVC()

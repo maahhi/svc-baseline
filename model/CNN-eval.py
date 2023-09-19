@@ -135,8 +135,8 @@ print(device)
 model.to(device)
 
 
-X = load('./../data-preprocess/run2/data.joblib')
-Y = load('./../data-preprocess/run2/labels.joblib')
+X = load('./../data-preprocess/run8/data.joblib')
+Y = load('./../data-preprocess/run8/labels.joblib')
 
 # Find indices where Y is 0 or 1
 filtered_indices = np.where((Y == 0) | (Y == 1))[0]

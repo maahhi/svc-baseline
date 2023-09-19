@@ -44,8 +44,12 @@ hop_length = 512
 log.append(f'{hop_length=}')
 time_steps = 216  # Number of time-steps per spectrogram (e.g., 3 seconds at 22050 Hz with a hop_length of 512)
 log.append(f'{time_steps=}')
+overlap = 0 #int(time_steps/3)
+log.append(f'{overlap=}')
 limit_of_lables =1
 log.append(f'{limit_of_lables=}')
+lable_list = ['female1','female2','male1','male2']
+log.append(f'{lable_list=}')
 
 
 
@@ -64,7 +68,10 @@ songs = []
 labels = sorted(os.listdir(dataset_path))
 print(labels)
 for label_id, label in enumerate(labels):
-    if label_id>limit_of_lables-1:
+    if len(lable_list) > 0 :
+        if label not in lable_list:
+            continue
+    elif label_id>limit_of_lables-1:
         break
     print(label_id,label)
     class_folder = os.path.join(dataset_path, label)
@@ -74,18 +81,14 @@ for label_id, label in enumerate(labels):
                 audio_path = os.path.join(root, file)
                 mel_db = extract_features(audio_path)
                 song_name = audio_path.split("\\")[-1].split('.')[0][3:]
-                #print(song_name)
-                # Padding or truncating to ensure consistent shape
-                extra = mel_db.shape[1] - time_steps
-                if extra>0:
-                    mel_db = mel_db[:, int(extra/2)-1:time_steps+int(extra/2)-1]
-                else:
-                    padding = np.zeros((n_mels, time_steps - mel_db.shape[1]))
-                    mel_db = np.hstack((mel_db, padding))
-
-                X.append(mel_db)
-                Y.append(label_id)
-                songs.append(song_name)
+                lenght = time_steps
+                b = np.array([mel_db[:,i:i+lenght] for i in range(0, int(mel_db.shape[1]-lenght), lenght-overlap)])
+                for i in range(b.shape[0]):
+                    X.append(b[i])
+                for i in range(b.shape[0]):
+                    Y.append(label_id)
+                    songs.append(song_name)
+                
     
 
 unique_strings = set(songs)
@@ -94,8 +97,8 @@ string_to_int = {string: i for i, string in enumerate(unique_strings)}
 # Step 2: Convert the original list
 converted_list = [string_to_int[s] for s in songs]
 
-log.append(converted_list)  # This will be your list of integers
-log.append(string_to_int)   # This will be your dictionary of string to integer mappings
+log.append(f'{converted_list=}')  # This will be your list of integers
+log.append(f'{string_to_int=}')   # This will be your dictionary of string to integer mappings
 
 X = np.array(X)
 Y = np.array(Y)
@@ -119,25 +122,17 @@ dump(X, './'+new_run_dir+'/data.joblib')
 dump(Y, './'+new_run_dir+'/labels.joblib')
 dump(songs,'./'+new_run_dir+'/songs.joblib')
 
-# Split the data into training, validation, and test sets (e.g., 80%, 10%, 10%)
-from sklearn.model_selection import train_test_split
 
-X_temp, X_test, Y_temp, Y_test = train_test_split(X, Y, test_size=0.10, random_state=42)
-X_train, X_val, Y_train, Y_val = train_test_split(X_temp, Y_temp, test_size=1/9, random_state=42)
+log.append(f"Training samples: {X.shape[0]}")
 
-
-log.append(f"Training samples: {X_train.shape[0]}")
-log.append(f"Validation samples: {X_val.shape[0]}")
-log.append(f"Test samples: {X_test.shape[0]}")
-
-data_loaded = load('./'+new_run_dir+'/data.joblib')
-labels_loaded = load('./'+new_run_dir+'/labels.joblib')
+#data_loaded = load('./'+new_run_dir+'/data.joblib')
+#labels_loaded = load('./'+new_run_dir+'/labels.joblib')
 # function return true if 2 ndarray are equal
-log.append(np.array_equal(data_loaded, X))
-log.append(np.array_equal(labels_loaded, Y))
-log.append(Y == labels_loaded)
-log.append(Y)
-log.append(labels_loaded)
+#log.append(np.array_equal(data_loaded, X))
+#log.append(np.array_equal(labels_loaded, Y))
+#log.append(Y == labels_loaded)
+#log.append(Y)
+#log.append(labels_loaded)
 
 memory_after = get_memory_usage()
 
