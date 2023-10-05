@@ -1,0 +1,30 @@
+file size : 1009488 bytes
+
+variable, discription   , size     , shape         , code section
+
+samplerate = 16000
+Y , opened by librosa   ,183120    , (183120,1)    , CNN_eval_preprocessor:32
+183120*8 =1,464,960 (y*size of float64 which is 8 bytes)
+f0 , -                  ,2290      , (2290,1)      , CNN_eval_preprocessor:33
+sp , -                  ,1174770   , (2290,513)    , CNN_eval_preprocessor:33
+ap , -                  ,1174770   , (2290,513)    , CNN_eval_preprocessor:33
+sum of f0,sp,ap         ,2351830   , (2290,1027)   , None
+size sum / size y      = 12.84
+mel_db, -               ,2351830   , (1027,2290)    , singlefilepreprocessing:13
+X, -                    ,10*221832 , []             , singlefilepreprocessing:14
+X, -                    ,2218320    ,(10,1027,2290) , singlefilepreprocessing:15
+2218320*8 / 1009488 = 17.57
+2218320*8 = 17,746,560
+
+samplerate = 8000
+Y , opened by librosa   ,91560    , (91560,1)    , CNN_eval_preprocessor:32
+91560*8 =732,480 (y*size of float64 which is 8 bytes)
+f0 , -                  ,2290      , (2290,1)      , CNN_eval_preprocessor:33
+sp , -                  ,588530   , (2290,257)    , CNN_eval_preprocessor:33
+ap , -                  ,588530   , (2290,257)    , CNN_eval_preprocessor:33
+features, f0+sp+ap      ,1179350   , (515,2290)   , None
+size features / size y = 1179350/91560 = 12.87
+
+1179350*8 / 1009488 = 9.1
+
+

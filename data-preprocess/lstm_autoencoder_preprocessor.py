@@ -3,6 +3,20 @@ import numpy as np
 from joblib import dump, load
 import os
 
+
+def make_new_dir():
+    path = os.getcwd()
+    print(path)
+    dirs = os.listdir(path)
+    run_dirs = []
+    for dir in dirs:
+        if dir.startswith("pairwise_run"):
+            run_dirs.append(dir)
+    run_dirs.sort()
+    new_dir = "pairwise_run" + str(int(run_dirs[-1][3:]) + 1)
+    os.mkdir(new_dir)
+    return new_dir
+
 # prepare data for Auto encoder
 data_run = 'run8'
 X = load('./'+data_run+'/data.joblib')
@@ -46,22 +60,34 @@ for j in range(len(duplicate_groups)):
     for i in duplicate_groups[j]:
         song_id[i] = j
 
-def make_new_dir():
-    path = os.getcwd()
-    print(path)
-    dirs = os.listdir(path)
-    run_dirs = []
-    for dir in dirs:
-        if dir.startswith("pairwise_run"):
-            run_dirs.append(dir)
-    run_dirs.sort()
-    new_dir = "pairwise_run" + str(int(run_dirs[-1][3:]) + 1)
-    os.mkdir(new_dir)
-    return new_dir
+
+remove_zeros_song_id = np.where(song_id != 0)[0]
+X = X[remove_zeros_song_id]
+Y = Y[remove_zeros_song_id]
+song_id = song_id[remove_zeros_song_id]
+#
+
+# Get indices where Y has value 0
+indices_singer0 = np.where(Y == 0)[0]
+
+# Extract rows from X where Y == 0
+Xtrain = X[indices_singer0]
+
+# For each song_id from the filtered Xtrain, find the row in X with the same song_id but Y == 1
+new_song_id = []
+Ytrain_list = []
+for idx in indices_singer0:
+    song_id_val = song_id[idx]
+    new_song_id.append(song_id_val)
+    paired_song_idx = np.where((song_id == song_id_val) & (Y == 9))[0]
+    if paired_song_idx.size:
+        Ytrain_list.append(X[paired_song_idx[0]])
+
+Ytrain = np.array(Ytrain_list)
 #new_run_dir = make_new_dir()
 new_run_dir = 'pairwise_run2'
-dump(X, './'+new_run_dir+'/data.joblib')
-dump(Y, './'+new_run_dir+'/labels.joblib')
-dump(song_id,'./'+new_run_dir+'/song_id.joblib')
+dump(Xtrain, './'+new_run_dir+'/Xtrain.joblib')
+dump(Ytrain, './'+new_run_dir+'/Ytrain.joblib')
+dump(new_song_id,'./'+new_run_dir+'/new_song_id.joblib')
 
 
