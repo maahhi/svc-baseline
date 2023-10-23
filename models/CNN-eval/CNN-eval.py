@@ -34,6 +34,7 @@ class SingerDataset(Dataset):
         return len(self.data_list)
 
     def __getitem__(self, idx):
+
         return self.data_list[idx], self.label_list[idx]
 
 
