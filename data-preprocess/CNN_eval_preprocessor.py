@@ -9,6 +9,23 @@ import soundfile as sf
 import inspect
 
 
+def get_memory_usage():
+    process = psutil.Process(os.getpid())
+    return process.memory_info().rss / 1024 ** 2  # return in MB
+
+def make_new_dir():
+    path = os.getcwd()
+    print(path)
+    dirs = os.listdir(path)
+    run_dirs = []
+    for dir in dirs:
+        if dir.startswith("run"):
+            run_dirs.append(dir)
+    run_dirs.sort(key=lambda x: int(x[3:]))
+    new_dir = "run" + str(int(run_dirs[-1][3:]) + 1)
+    os.mkdir(new_dir)
+    return new_dir
+
 reconstruct = False
 
 def extract_world_features(x, fs):
@@ -36,9 +53,7 @@ def extract_features(audio_path, sample_rate):
 def main():
     sample_rate = 16000
     path = os.getcwd()
-    def get_memory_usage():
-        process = psutil.Process(os.getpid())
-        return process.memory_info().rss / 1024**2  # return in MB
+
 
     # Before processing
     memory_before = get_memory_usage()
@@ -114,18 +129,7 @@ def main():
     Y = np.array(Y)
 
     # a function search in specific directory, find all directories start with "run+number" and make a new directory with the next number
-    def make_new_dir():
-        path = os.getcwd()
-        print(path)
-        dirs = os.listdir(path)
-        run_dirs = []
-        for dir in dirs:
-            if dir.startswith("run"):
-                run_dirs.append(dir)
-        run_dirs.sort()
-        new_dir = "run" + str(int(run_dirs[-1][3:]) + 1)
-        os.mkdir(new_dir)
-        return new_dir
+
     new_run_dir = make_new_dir()
     songs = np.array(converted_list)
     dump(X, './'+new_run_dir+'/data.joblib')
@@ -160,5 +164,5 @@ def main():
             f.write("%s\n" % item)
 
 
-if "__name__" == "__main__" :
+if __name__ == "__main__" :
     main()

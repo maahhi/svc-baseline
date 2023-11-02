@@ -4,9 +4,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, fbeta_score, accuracy_score
 from joblib import dump, load
 
-X = load('./../../data-preprocess/run8/data.joblib')
+X = load('../../data-preprocess/run08/data.joblib')
 X = X.reshape(X.shape[0], -1)
-Y = load('./../../data-preprocess/run8/labels.joblib')
+Y = load('../../data-preprocess/run08/labels.joblib')
 # Find indices where Y is 0 or 1
 filtered_indices = np.where((Y == 0) | (Y == 9))[0]
 
